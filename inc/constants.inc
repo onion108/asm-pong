@@ -1,0 +1,2 @@
+BALL_SPEED = 3
+PAD_SPEED = 5
