@@ -117,24 +117,24 @@ msg_len =  . - msg - 1
 // Pads to control
 pad_left:
 .word 30                // x
-.word (WIN_HEIGHT-80)/2 // y
-.word 5                 // w
-.word 80                // h
+.word (WIN_HEIGHT-80)/2 // y (#4)
+.word 5                 // w (#8)
+.word 80                // h (#16)
 
 pad_right:
 .word WIN_WIDTH-30-5    // x
-.word (WIN_HEIGHT-80)/2 // y
-.word 5                 // w
-.word 80                // h
+.word (WIN_HEIGHT-80)/2 // y (#4)
+.word 5                 // w (#8)
+.word 80                // h (#16)
 
 ball:
-.word 400         // x
-.word 300         // y (#4)
-.word 10          // r (#8)
-.word BALL_SPEED  // vx (#12)
-.word BALL_SPEED  // vy (#16)
+.word 400               // x
+.word 300               // y (#4)
+.word 10                // r (#8)
+.word BALL_SPEED        // vx (#12)
+.word BALL_SPEED        // vy (#16)
 
 score:
 .word 0 // left
-.word 0 // right
+.word 0 // right (#4)
 
