@@ -4,6 +4,7 @@
 .include "inc/window.inc"
 .include "inc/keycode.inc"
 .include "inc/constants.inc"
+.include "inc/config.inc"
 
 .text
 _start:
@@ -63,6 +64,7 @@ bl render_score
 
 bl _EndDrawing
 
+.if FEATURE_RKEY_RESET
 mov x0, KEY_R
 bl _IsKeyPressed
 cbnz w0, call_reset
@@ -70,6 +72,7 @@ b end_call_reset
 call_reset:
 bl reset_everything
 end_call_reset:
+.endif
 
 b frame_process
 
