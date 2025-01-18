@@ -7,11 +7,6 @@
 
 .text
 _start:
-mov x0, #1
-ldmem x1, msg
-mov x2, msg_len
-mov x16, #4
-svc #0
 
 // InitWindow(int, int, const char*)
 mov x0, WIN_WIDTH 
