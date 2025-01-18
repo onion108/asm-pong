@@ -38,7 +38,7 @@ ldr lr, [sp], #16
 ret
 // end render_ball
 
-// update_ball(struct Ball *ball, struct Pad *pad_left, struct Pad *pad_right);
+// update_ball(struct Ball *ball, struct Pad *pad_left, struct Pad *pad_right, struct Score *score);
 .global update_ball
 update_ball:
 
@@ -76,6 +76,40 @@ update_ball__upper_collide:
 mov w10, BALL_SPEED
 str w10, [x0, #16]
 update_ball__upper_collide_end:
+
+// Check right bound and perform score update
+sub w11, w11, w13
+cmp w11, WIN_WIDTH
+add w11, w11, w13
+bgt update_ball__right_collide
+b update_ball__right_collide_end
+update_ball__right_collide:
+ldr w4, [x3]
+add w4, w4, #1
+str w4, [x3]
+
+str lr, [sp, #-16]!
+bl reset_ball
+ldr lr, [sp], #16
+ret
+update_ball__right_collide_end:
+
+// Check left bound and perform score update
+neg w13, w13
+cmp w11, w13
+neg w13, w13
+blt update_ball__left_collide
+b update_ball__left_collide_end
+update_ball__left_collide:
+ldr w4, [x3, #4]
+add w4, w4, #1
+str w4, [x3, #4]
+
+str lr, [sp, #-16]!
+bl reset_ball
+ldr lr, [sp], #16
+ret
+update_ball__left_collide_end:
 
 // }}}
 

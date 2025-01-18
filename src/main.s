@@ -40,6 +40,7 @@ bl control_pad
 ldmem x0, ball
 ldmem x1, pad_left
 ldmem x2, pad_right
+ldmem x3, score
 bl update_ball
 
 bl _BeginDrawing
@@ -61,6 +62,9 @@ bl render_pad
 
 ldmem x0, ball
 bl render_ball
+
+ldmem x0, score
+bl render_score
 
 bl _EndDrawing
 b frame_process
@@ -94,7 +98,11 @@ pad_right:
 ball:
 .word 400         // x
 .word 300         // y (#4)
-.word 5           // r (#8)
+.word 10          // r (#8)
 .word BALL_SPEED  // vx (#12)
 .word BALL_SPEED  // vy (#16)
+
+score:
+.word 0 // left
+.word 0 // right
 

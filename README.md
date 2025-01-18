@@ -19,6 +19,6 @@ Executable will be placed at `dist/`.
 - [x] Implement pad movement.
 - [x] Implement ball movement.
 - [x] Implement ball collision.
-- [ ] Implement scores.
-- [ ] Implement score display.
+- [x] Implement scores.
+- [x] Implement score display.
 
