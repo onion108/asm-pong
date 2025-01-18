@@ -33,8 +33,8 @@ str x2, [sp, #-16]!
 str lr, [sp, #-16]!
 
 ldmem x0, score_text_buf // Text
-mov x1, 0                // X-coord
-mov x2, 0                // Y-coord
+mov x1, SCORE_PADDING    // X-coord
+mov x2, SCORE_PADDING    // Y-coord
 mov x3, SCORE_TEXT_SIZE  // Font Size
 
 mov w5, #0xFF            // Color
@@ -66,11 +66,12 @@ ldr lr, [sp], #16
 
 mov x1, WIN_WIDTH
 sub x1, x1, x0    // x1 = WIN_WIDTH - text_width
+sub x1, x1, SCORE_PADDING
 
 // Ready to call DrawText!
 ldmem x0, score_text_buf // Text
                          // X-Coord calculated and stored in the correct reg, skip
-mov x2, 0                // Y-Coord
+mov x2, SCORE_PADDING    // Y-Coord
 mov x3, SCORE_TEXT_SIZE  // Font Size
 mov w5, #0xFF            // Color
 bfi w4, w5, #0, #8
