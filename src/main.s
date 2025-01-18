@@ -62,6 +62,15 @@ ldmem x0, score
 bl render_score
 
 bl _EndDrawing
+
+mov x0, KEY_R
+bl _IsKeyPressed
+cbnz w0, call_reset
+b end_call_reset
+call_reset:
+bl reset_everything
+end_call_reset:
+
 b frame_process
 
 close_window:
@@ -73,22 +82,50 @@ mov x0, #0
 mov x16, #1
 svc #0
 
+reset_everything:
+ldmem x2, pad_left
+mov x0, 30
+mov x1, (WIN_HEIGHT-80)/2
+stp w0, w1, [x2]
+mov x0, 5
+mov x1, 80
+stp w0, w1, [x2, #8]
+
+ldmem x2, pad_right 
+mov x0, WIN_WIDTH-30-5
+mov x1, (WIN_HEIGHT-80)/2
+stp w0, w1, [x2]
+mov x0, 5
+mov x1, 80
+stp w0, w1, [x2, #8]
+
+ldmem x2, score
+mov x0, 0
+stp w0, w0, [x2]
+
+str lr, [sp, #-16]!
+ldmem x0, ball
+bl reset_ball
+ldr lr, [sp], #16
+
+ret
+
 .data
 msg: .asciz "Pong in Assembly (WIP) \n"
 msg_len =  . - msg - 1
 
 // Pads to control
 pad_left:
-.word 30 // x
-.word 260 // y
-.word 5  // w
-.word 80 // h
+.word 30                // x
+.word (WIN_HEIGHT-80)/2 // y
+.word 5                 // w
+.word 80                // h
 
 pad_right:
-.word 765 // x
-.word 260 // y
-.word 5 // w
-.word 80 // h
+.word WIN_WIDTH-30-5    // x
+.word (WIN_HEIGHT-80)/2 // y
+.word 5                 // w
+.word 80                // h
 
 ball:
 .word 400         // x
