@@ -1,5 +1,6 @@
 .include "inc/constants.inc"
 .include "inc/window.inc"
+.include "inc/config.inc"
 
 // struct Ball {
 //     i32 x;
@@ -41,6 +42,7 @@ ret
 // update_ball(struct Ball *ball, struct Pad *pad_left, struct Pad *pad_right, struct Score *score);
 .global update_ball
 update_ball:
+// TODO: Those BALL_SPEED references should be replaced with proper calculation to fit FEATURE_RANDOM.
 
 // Move the ball
 ldp w9, w10, [x0, #12] // w9=vx, w10=vy
@@ -204,6 +206,116 @@ mov w3, BALL_SPEED
 mov w4, BALL_SPEED
 stp w1, w2, [x0]
 stp w3, w4, [x0, #12]
+
+.if FEATURE_RANDOM
+str x0, [sp, #-16]!
+
+// x0 = rand() % 15 + 40 (Generate a random angle)
+str lr, [sp, #-16]!
+bl _rand
+ldr lr, [sp], #16
+mov x2, #20
+udiv x1, x0, x2
+msub x0, x1, x2, x0
+add x0, x0, #20
+
+eor x3, x3, x3
+eor x4, x4, x4
+
+mov x5, x0
+ldr x0, [sp], #16
+ldp w3, w4, [x0, #12]
+str x0, [sp, #-16]!
+mov x0, x5
+
+add x0, x0, #40
+scvtf d0, x0
+mov x1, #360
+scvtf d1, x1
+fdiv d0, d0, d1 // d0 = d0 / 360.0
+adrp x1, pi@PAGE
+add x1, x1, pi@PAGEOFF
+ldr d1, [x1]
+fadd d1, d1, d1 // Get 2*pi
+fmul d0, d0, d1 // d0 = deg / 360.0 * 2 * pi
+
+str x3, [sp, #-16]!
+str x4, [sp, #-16]!
+
+str d0, [sp, #-16]!
+str lr, [sp, #-16]!
+bl _sin
+fmov d1, d0
+ldr lr, [sp], #16
+ldr d0, [sp], #16
+
+str d0, [sp, #-16]!
+str d1, [sp, #-16]!
+str lr, [sp, #-16]!
+bl _cos
+fmov d2, d0
+ldr lr, [sp], #16
+ldr d1, [sp], #16
+ldr d0, [sp], #16
+
+// Here, d0 = radian, d1 = sin(d0), d2 = sin(d1).
+
+// Pop vx and vy value out
+ldr x4, [sp], #16
+ldr x3, [sp], #16
+scvtf d3, x3
+scvtf d4, x4
+mov x5, BALL_SPEED*2
+scvtf d5, x5
+fmul d3, d5, d2 // vx = speed*cos(theta)
+fmul d4, d5, d1 // vy = speed*sin(theta)
+fcvtau x3, d3
+fcvtau x4, d4
+
+// What about randomizing the sign as well?
+str x3, [sp, #-16]!
+str x4, [sp, #-16]!
+
+str lr, [sp, #-16]!
+bl _rand
+ldr lr, [sp], #16
+
+str x0, [sp, #-16]!
+str lr, [sp, #-16]!
+bl _rand
+ldr lr, [sp], #16
+
+ldr x9, [sp], #16
+mov x10, x0
+
+ldr x4, [sp], #16
+ldr x3, [sp], #16
+// here x9 and x10 are two random numbers, and x3 = vx, x4 = vy.
+
+and x9, x9, #1
+and x10, x10, #1
+
+cbnz x9, reset_ball__neg_vx
+b reset_ball__neg_vx_end
+reset_ball__neg_vx:
+neg w3, w3
+reset_ball__neg_vx_end:
+
+cbnz x10, reset_ball__neg_vy
+b reset_ball__neg_vy_end
+reset_ball__neg_vy:
+neg w4, w4
+reset_ball__neg_vy_end:
+
+ldr x0, [sp], #16
+stp w3, w4, [x0, #12]
+.endif
+
 ret
 // end reset_ball
+
+.data
+pi:
+	.word	1413753926
+	.word	1074340347
 

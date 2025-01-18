@@ -9,6 +9,12 @@
 .text
 _start:
 
+.if FEATURE_RANDOM
+mov x0, #0
+bl _time
+bl _srand
+.endif
+
 // InitWindow(int, int, const char*)
 mov x0, WIN_WIDTH 
 mov x1, WIN_HEIGHT
@@ -18,6 +24,11 @@ bl _InitWindow
 
 mov x0, 60
 bl _SetTargetFPS
+
+.if FEATURE_RANDOM
+ldmem x0, ball
+bl reset_ball
+.endif
 
 frame_process:
 bl _WindowShouldClose
