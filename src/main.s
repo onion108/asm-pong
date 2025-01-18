@@ -12,8 +12,8 @@ _start:
 // InitWindow(int, int, const char*)
 mov x0, WIN_WIDTH 
 mov x1, WIN_HEIGHT
-adrp x2, msg@PAGE
-add x2, x2, msg@PAGEOFF
+adrp x2, window_title@PAGE
+add x2, x2, window_title@PAGEOFF
 bl _InitWindow
 
 mov x0, 60
@@ -114,8 +114,8 @@ ldr lr, [sp], #16
 ret
 
 .data
-msg: .asciz "Pong in Assembly (WIP) \n"
-msg_len =  . - msg - 1
+window_title: .asciz "Pong in Assembly (WIP) \n"
+window_title_len =  . - window_title - 1
 
 // Pads to control
 pad_left:
