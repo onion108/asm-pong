@@ -64,7 +64,11 @@ b update_ball__lower_collide_end
 
 update_ball__lower_collide:
 // Set Y speed
-mov w10, -BALL_SPEED
+cmp w10, #0
+bge update_ball__lcsetspeed
+b update_ball__lower_collide_end
+update_ball__lcsetspeed:
+neg w10, w10
 str w10, [x0, #16]
 update_ball__lower_collide_end:
 
@@ -75,7 +79,11 @@ blt update_ball__upper_collide
 b update_ball__upper_collide_end
 
 update_ball__upper_collide:
-mov w10, BALL_SPEED
+cmp w10, #0
+ble update_ball__ucsetspeed
+b update_ball__upper_collide_end
+update_ball__ucsetspeed:
+neg w10, w10
 str w10, [x0, #16]
 update_ball__upper_collide_end:
 
@@ -126,7 +134,7 @@ ldr w14, [x1] // Left pad's X coord
 cmp w11, w14
 blt update_ball__pad_collide_end
 
-// {{{ Pad Collide checks 
+// {{{ Pad Collide checks
 update_ball__pad_collide:
 
 // Check right pad and perform collide
@@ -155,8 +163,12 @@ update_ball__right_pad_collide_checks_end:
 b update_ball__right_pad_collide_end
 
 update_ball__right_pad_collide:
+
+cmp w9, #0
+blt update_ball__right_pad_collide_end
+update_ball__right_pad_collide_set_speed:
 // Set X speed
-mov w9, -BALL_SPEED
+neg w9, w9
 str w9, [x0, #12]
 update_ball__right_pad_collide_end:
 
@@ -188,6 +200,10 @@ update_ball__left_pad_collide_checks_end:
 b update_ball__left_pad_collide_end
 
 update_ball__left_pad_collide:
+
+cmp w9, #0
+bgt update_ball__left_pad_collide_end
+update_ball__left_pad_collide_setspeed:
 // Set X speed
 mov w9, BALL_SPEED
 str w9, [x0, #12]
@@ -210,11 +226,11 @@ stp w3, w4, [x0, #12]
 .if FEATURE_RANDOM
 str x0, [sp, #-16]!
 
-// x0 = rand() % 15 + 40 (Generate a random angle)
+// x0 = rand() % 20 + 10 (Generate a random angle)
 str lr, [sp, #-16]!
 bl _rand
 ldr lr, [sp], #16
-mov x2, #20
+mov x2, #10
 udiv x1, x0, x2
 msub x0, x1, x2, x0
 add x0, x0, #20
