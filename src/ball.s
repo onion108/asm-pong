@@ -42,7 +42,6 @@ ret
 // update_ball(struct Ball *ball, struct Pad *pad_left, struct Pad *pad_right, struct Score *score);
 .global update_ball
 update_ball:
-// TODO: Those BALL_SPEED references should be replaced with proper calculation to fit FEATURE_RANDOM.
 
 // Move the ball
 ldp w9, w10, [x0, #12] // w9=vx, w10=vy
